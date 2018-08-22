@@ -1,7 +1,8 @@
 {
   "slack": {
     "railtie": {
-      "token": "XXX"
+      "token": "",
+      "verificationToken": ""
     }
   }
 }
