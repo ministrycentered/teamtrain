@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/ministrycentered/railtie/issues"
   },
-  "homepage": "https://github.com/ministrycentered/railtie#readme"
+  "homepage": "https://github.com/ministrycentered/railtie#readme",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
+  }
 }
