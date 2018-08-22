@@ -23,6 +23,7 @@
     "babel-preset-env": "^1.7.0",
     "body-parser": "^1.18.3",
     "config": "^2.0.1",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "node-fetch": "^2.2.0"
   }
 }
