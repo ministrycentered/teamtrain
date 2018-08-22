@@ -1,0 +1,7 @@
+{
+  "slack": {
+    "railtie": {
+      "token": "XXX"
+    }
+  }
+}
