@@ -1,5 +1,5 @@
-import config from "config"
-import redis from "redis"
+const config = require("config")
+const redis = require("redis")
 
 const redisConfig = config.get("redis")
 const client = redis.createClient(redisConfig.port, redisConfig.host)
@@ -12,7 +12,7 @@ function key(name) {
   return `${PREFIX}-${name}`
 }
 
-export function setPrepMessageInfo(messageJson) {
+exports.setPrepMessageInfo = function setPrepMessageInfo(messageJson) {
   client
     .multi()
     .set(CHANNEL_KEY, messageJson.channel)
@@ -20,7 +20,7 @@ export function setPrepMessageInfo(messageJson) {
     .exec()
 }
 
-export async function getPrepMessageInfo() {
+exports.getPrepMessageInfo = async function getPrepMessageInfo() {
   return new Promise((resolve, reject) => {
     client
       .multi()
@@ -32,4 +32,4 @@ export async function getPrepMessageInfo() {
   }).then(([channel, timestamp]) => ({ channel, timestamp }))
 }
 
-export default exports
+module.exports = exports
