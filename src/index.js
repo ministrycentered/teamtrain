@@ -1,4 +1,4 @@
-const redisClient = require("./redisClient.mjs")
+const redisClient = require("./redisClient")
 const config = require("config")
 const express = require("express")
 const bodyParser = require("body-parser")
@@ -103,59 +103,6 @@ app.start = async () => {
         )
     }
     res.end()
-  })
-
-  // entrance from cron?
-  app.post("/postMessage", async (req, res) => {
-    // TODO: verify sender before we do anything with Slack
-    const mainMessageBody = {
-      channel: slackConfig.railtie.channel,
-      text:
-        "All aboard! The train departs at 1:30 PM Pacific Time. Grab your :ticket: to join this train."
-    }
-
-    const postMessageResponse = await fetch("https://slack.com/api/chat.postMessage", {
-      method: "POST",
-      body: JSON.stringify(mainMessageBody),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${slackConfig.railtie.token}`
-      }
-    })
-
-    const messageJson = await postMessageResponse.json()
-
-    if (!messageJson.ok) {
-      res.end(messageJson.error)
-      return
-    }
-
-    const reactionAddBody = {
-      channel: messageJson.channel,
-      timestamp: messageJson.ts,
-      name: "ticket"
-    }
-
-    redisClient.setPrepMessageInfo(messageJson)
-
-    const reactionResponse = await fetch("https://slack.com/api/reactions.add", {
-      method: "POST",
-      body: JSON.stringify(reactionAddBody),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${slackConfig.railtie.token}`
-      }
-    })
-
-    const reactionJson = await reactionResponse.json()
-
-    if (!reactionJson.ok) {
-      res.end(reactionJson.error)
-      return
-    }
-
-    res.writeHead(200, { "Content-Type": "application/json" })
-    res.end(reactionJson.ok.toString())
   })
 
   server.listen(port)
