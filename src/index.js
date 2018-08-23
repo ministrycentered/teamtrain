@@ -1,7 +1,7 @@
 import config from "config"
 import express from "express"
 import bodyParser from "body-parser"
-import redis from "redis"
+import redis from "async-redis"
 
 import fetch from "node-fetch"
 
@@ -49,9 +49,11 @@ app.start = async () => {
   })
 
   app.post("/startTrain", async (req, res) => {
-    // TODO: unhardcode this and used stored channel and timestamp
+    const channel = await redisClient.get("railtie-message-channel")
+    const timestamp = await redisClient.get("railtie-message-ts")
+
     const reactionsResponse = await fetch(
-      `https://slack.com/api/reactions.get?channel=CCBHDCGVA&timestamp=1534966910.000100`,
+      `https://slack.com/api/reactions.get?channel=${channel}&timestamp=${timestamp}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -137,8 +139,8 @@ app.start = async () => {
       name: "ticket"
     }
 
-    console.log(messageJson.channel)
-    console.log(messageJson.ts)
+    redisClient.set("railtie-message-channel", messageJson.channel)
+    redisClient.set("railtie-message-ts", messageJson.ts)
 
     const reactionResponse = await fetch("https://slack.com/api/reactions.add", {
       method: "POST",
