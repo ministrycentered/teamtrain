@@ -1,7 +1,7 @@
 import config from "config"
 import express from "express"
 import bodyParser from "body-parser"
-import redis from "async-redis"
+import redisClient from "./redisClient"
 
 import fetch from "node-fetch"
 
@@ -10,8 +10,6 @@ import https from "https"
 
 const app = express()
 const slackConfig = config.get("slack")
-const redisConfig = config.get("redis")
-const redisClient = redis.createClient(redisConfig.port, redisConfig.host)
 
 function shuffle(array) {
   var i = 0,
@@ -49,8 +47,9 @@ app.start = async () => {
   })
 
   app.post("/startTrain", async (req, res) => {
-    const channel = await redisClient.get("railtie-message-channel")
-    const timestamp = await redisClient.get("railtie-message-ts")
+    const { channel, timestamp } = await redisClient.getPrepMessageInfo()
+
+    console.log({ channel, timestamp })
 
     const reactionsResponse = await fetch(
       `https://slack.com/api/reactions.get?channel=${channel}&timestamp=${timestamp}`,
@@ -139,8 +138,7 @@ app.start = async () => {
       name: "ticket"
     }
 
-    redisClient.set("railtie-message-channel", messageJson.channel)
-    redisClient.set("railtie-message-ts", messageJson.ts)
+    redisClient.setPrepMessageInfo(messageJson)
 
     const reactionResponse = await fetch("https://slack.com/api/reactions.add", {
       method: "POST",
