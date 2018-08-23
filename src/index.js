@@ -1,6 +1,7 @@
 import config from "config"
 import express from "express"
 import bodyParser from "body-parser"
+import redisClient from "./redisClient"
 
 import fetch from "node-fetch"
 
@@ -25,6 +26,7 @@ function shuffle(array) {
 
 app.start = async () => {
   const port = config.get("port")
+  console.log("starting at server at port", port)
   app.set("port", port)
   app.use(bodyParser.json())
 
@@ -45,9 +47,12 @@ app.start = async () => {
   })
 
   app.post("/startTrain", async (req, res) => {
-    // TODO: unhardcode this and used stored channel and timestamp
+    const { channel, timestamp } = await redisClient.getPrepMessageInfo()
+
+    console.log({ channel, timestamp })
+
     const reactionsResponse = await fetch(
-      `https://slack.com/api/reactions.get?channel=CCBHDCGVA&timestamp=1534966910.000100`,
+      `https://slack.com/api/reactions.get?channel=${channel}&timestamp=${timestamp}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -133,8 +138,7 @@ app.start = async () => {
       name: "ticket"
     }
 
-    console.log(messageJson.channel)
-    console.log(messageJson.ts)
+    redisClient.setPrepMessageInfo(messageJson)
 
     const reactionResponse = await fetch("https://slack.com/api/reactions.add", {
       method: "POST",
