@@ -1,6 +1,7 @@
 import config from "config"
 import express from "express"
 import bodyParser from "body-parser"
+import redis from "redis"
 
 import fetch from "node-fetch"
 
@@ -9,6 +10,8 @@ import https from "https"
 
 const app = express()
 const slackConfig = config.get("slack")
+const redisConfig = config.get("redis")
+const redisClient = redis.createClient(redisConfig.port, redisConfig.host)
 
 function shuffle(array) {
   var i = 0,
@@ -25,6 +28,7 @@ function shuffle(array) {
 
 app.start = async () => {
   const port = config.get("port")
+  console.log("starting at server at port", port)
   app.set("port", port)
   app.use(bodyParser.json())
 

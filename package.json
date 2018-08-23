@@ -24,7 +24,8 @@
     "body-parser": "^1.18.3",
     "config": "^2.0.1",
     "express": "^4.16.3",
-    "node-fetch": "^2.2.0"
+    "node-fetch": "^2.2.0",
+    "redis": "^2.8.0"
   },
   "devDependencies": {
     "prettier": "^1.14.2"
