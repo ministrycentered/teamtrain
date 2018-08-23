@@ -1,12 +1,10 @@
-import config from "config"
-import express from "express"
-import bodyParser from "body-parser"
-import redisClient from "./redisClient"
-
-import fetch from "node-fetch"
-
-import http from "http"
-import https from "https"
+const redisClient = require("./redisClient.mjs")
+const config = require("config")
+const express = require("express")
+const bodyParser = require("body-parser")
+const fetch = require("node-fetch")
+const http = require("http")
+const https = require("https")
 
 const app = express()
 const slackConfig = config.get("slack")
@@ -164,5 +162,3 @@ app.start = async () => {
 }
 
 app.start()
-
-export default app
