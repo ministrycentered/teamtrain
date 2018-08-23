@@ -10,6 +10,19 @@ import https from 'https'
 const app = express()
 const slackConfig = config.get('slack')
 
+function shuffle (array) {
+  var i = 0
+    , j = 0
+    , temp = null
+
+  for (i = array.length - 1; i > 0; i -= 1) {
+    j = Math.floor(Math.random() * (i + 1))
+    temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
+  }
+}
+
 app.start = async () => {
   const port = config.get('port')
   app.set('port', port)
@@ -29,6 +42,54 @@ app.start = async () => {
 
   app.get('/', (req, res) => {
     res.end("hooray! it works!")
+  })
+
+  app.post("/startTrain", async (req, res) => {
+    // TODO: unhardcode this and used stored channel and timestamp
+    const reactionsResponse = await fetch(`https://slack.com/api/reactions.get?channel=CCBHDCGVA&timestamp=1534966910.000100`, {
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${slackConfig.railtie.token}` }
+    })
+
+    const reactionJson = await reactionsResponse.json()
+    if (!reactionJson.ok) {
+      res.end("bad")
+      return
+    }
+
+    const reactionUsers = reactionJson
+      .message
+      .reactions
+      .filter(emoji => emoji.name == "ticket")[0]
+      .users
+      .filter(user => user != "UCE34NAFQ") // remove bot user
+
+    shuffle(reactionUsers)
+
+    var group
+    while (reactionUsers.length > 0) {
+      // create a group of 3 if odd number
+      if (reactionUsers.length == 3) {
+        group = reactionUsers.splice(0, 3).toString()
+      } else {
+        group = reactionUsers.splice(0, 2).toString()
+      }
+
+      fetch("https://slack.com/api/mpim.open", {
+        method: 'POST',
+        body: JSON.stringify({ users: group }),
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${slackConfig.railtie.token}` }
+      })
+        .then(response => response.json())
+        .then( json =>
+          fetch("https://slack.com/api/chat.postMessage", {
+            method: 'POST',
+            body: JSON.stringify({ channel: json.group.id, text: 'Testing Testing, test 1 2 3!' }),
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${slackConfig.railtie.token}` }
+          }).then(ok => ok.json())
+          .then(success => !success.ok ? res.end("couldn't post") : success.toString())
+        )
+    }
+    res.end()
   })
 
   // entrance from cron?
@@ -57,6 +118,9 @@ app.start = async () => {
       timestamp: messageJson.ts,
       name: "ticket"
     }
+
+    console.log(messageJson.channel)
+    console.log(messageJson.ts)
 
     const reactionResponse = await fetch("https://slack.com/api/reactions.add", {
       method: 'POST',
