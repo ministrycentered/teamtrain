@@ -1,6 +1,7 @@
 const redisClient = require("./redisClient")
 const fetch = require("node-fetch")
 const slackConfig = require("config").get("slack")
+const slackClient = require("./slackClient")
 const moment = require("moment")
 require("moment-timezone")
 
@@ -19,51 +20,21 @@ if (departureTime.isBefore(moment())) {
 
 console.log("🚂 will depart at", departureTime.format("h:mma"))
 
-const mainMessageBody = {
-  channel: slackConfig.railtie.channel,
-  text: `All aboard! The train departs at ${departureTime.format(
-    "h:mma z"
-  )}. Grab your :ticket: to join this train.`
-}
-
 async function main() {
-  const postMessageResponse = await fetch("https://slack.com/api/chat.postMessage", {
-    method: "POST",
-    body: JSON.stringify(mainMessageBody),
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${slackConfig.railtie.token}`
-    }
+  const messageJson = await slackClient.postMessage({
+    channel: slackConfig.railtie.channel,
+    text: `All aboard! The train departs at ${departureTime.format(
+      "h:mma z"
+    )}. Grab your :ticket: to join this train.`
   })
-
-  const messageJson = await postMessageResponse.json()
-
-  if (!messageJson.ok) {
-    process.exit(1)
-  }
-
-  const reactionAddBody = {
-    channel: messageJson.channel,
-    timestamp: messageJson.ts,
-    name: "ticket"
-  }
 
   redisClient.setPrepMessageInfo(messageJson)
 
-  const reactionResponse = await fetch("https://slack.com/api/reactions.add", {
-    method: "POST",
-    body: JSON.stringify(reactionAddBody),
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${slackConfig.railtie.token}`
-    }
+  await slackClient.addReaction({
+    channel: messageJson.channel,
+    timestamp: messageJson.ts,
+    name: "ticket"
   })
-
-  const reactionJson = await reactionResponse.json()
-
-  if (!reactionJson.ok) {
-    process.exit(1)
-  }
 }
 
 main().then(() => process.exit(0))
