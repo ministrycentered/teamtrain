@@ -1,4 +1,5 @@
 const redisClient = require("./redisClient")
+const slackClient = require("./slackClient")
 const fetch = require("node-fetch")
 const slackConfig = require("config").get("slack")
 
@@ -20,20 +21,7 @@ async function main() {
 
   console.log({ channel, timestamp })
 
-  const reactionsResponse = await fetch(
-    `https://slack.com/api/reactions.get?channel=${channel}&timestamp=${timestamp}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${slackConfig.railtie.token}`
-      }
-    }
-  )
-
-  const reactionJson = await reactionsResponse.json()
-  if (!reactionJson.ok) {
-    process.exit(1)
-  }
+  const reactionJson = await slackClient.getReactions({ channel, timestamp })
 
   const reactionUsers = reactionJson.message.reactions
     .filter(emoji => emoji.name == "ticket")[0]
@@ -43,7 +31,6 @@ async function main() {
 
   var group
   while (reactionUsers.length > 0) {
-    console.log("tryna match")
     // create a group of 3 if odd number
     if (reactionUsers.length == 3) {
       group = reactionUsers.splice(0, 3).toString()
@@ -51,27 +38,12 @@ async function main() {
       group = reactionUsers.splice(0, 2).toString()
     }
 
-    fetch("https://slack.com/api/mpim.open", {
-      method: "POST",
-      body: JSON.stringify({ users: group }),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${slackConfig.railtie.token}`
-      }
+    const groupChannel = await slackClient.openGroup(group)
+    // TODO these posts should happen in parallel please
+    await slackClient.postMessage({
+      channel: groupChannel.group.id,
+      text: "Testing Testing, test 1 2 3!"
     })
-      .then(response => response.json())
-      .then(json =>
-        fetch("https://slack.com/api/chat.postMessage", {
-          method: "POST",
-          body: JSON.stringify({ channel: json.group.id, text: "Testing Testing, test 1 2 3!" }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${slackConfig.railtie.token}`
-          }
-        })
-          .then(ok => ok.json())
-          .then(success => (!success.ok ? process.exit(1) : success.toString()))
-      )
   }
 }
 
