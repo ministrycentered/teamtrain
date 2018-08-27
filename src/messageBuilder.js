@@ -1,6 +1,5 @@
-const redisClient = require("./redisClient")
 const slackClient = require("./slackClient")
-const googleSheetsClient = require("./googleSheetsClient")
+const prompts = require("./prompts")
 const DEFAULT_ATTACHMENT = {
   pretext:
     "Time to board the train! Train departs NOW. You've got 15 minutes to converse with each other.",
@@ -45,8 +44,8 @@ exports.buildAttachments = async function buildAttachments(payload, members = nu
     }
   }
 
-  const personalprompt = await googleSheetsClient.getPersonalPrompt()
-  const workprompt = await googleSheetsClient.getWorkPrompt()
+  const personalprompt = await prompts.getPersonalPrompt()
+  const workprompt = await prompts.getWorkPrompt()
   promptAttachment.fields[0]["value"] = personalprompt
   promptAttachment.fields[1]["value"] = workprompt
 
