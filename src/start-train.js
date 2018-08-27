@@ -1,5 +1,6 @@
 const redisClient = require("./redisClient")
 const slackClient = require("./slackClient")
+const messageBuilder = require("./messageBuilder")
 const fetch = require("node-fetch")
 const slackConfig = require("config").get("slack")
 
@@ -20,24 +21,7 @@ function sendRequest(groupChannel) {
   console.log("Concurrent sendRequest: " + groupChannel.group.id)
   return slackClient.postMessage({
     channel: groupChannel.group.id,
-    "text": "Time to board the train! Train departs NOW. Please start a Slack or Zoom call and chat with each other for 15 minutes.\n\nSome conversation prompts to get you started (optional):",
-    "attachments": [
-      {
-        "text": "What’s the farthest you’ve ever been from home?",
-        "fallback": "Unable to fetch prompt.",
-        "callback_id": "prompt_callback",
-        "color": "#3AA3E3",
-        "attachment_type": "default",
-        "actions": [
-          {
-            "name": "prompt",
-            "text": "I need another prompt",
-            "type": "button",
-            "value": "new"
-          }
-        ]
-      }
-    ]
+    attachments: attachments
   })
 }
 

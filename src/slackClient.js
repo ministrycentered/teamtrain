@@ -22,6 +22,10 @@ async function apiRequest({ route, method = "GET", body }) {
   return json
 }
 
+exports.updateMessage = async function updateMessage(body) {
+  return apiRequest({ method: "POST", route:"chat.update", body })
+}
+
 exports.postMessage = async function postMessage(body) {
   return apiRequest({ method: "POST", route: "chat.postMessage", body })
 }
