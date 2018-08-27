@@ -12,9 +12,9 @@ const app = express()
 const slackConfig = config.get("slack")
 
 app.start = async () => {
-  const port = config.get("port")
-  console.log("starting at server at port", process.env.PORT || port)
-  app.set("port", process.env.PORT || port)
+  const port = process.env.PORT || config.get("port")
+  console.log("starting at server at port", port)
+  app.set("port", port)
   app.use(bodyParser.urlencoded({extended: true}))
   app.use(bodyParser.json())
 
