@@ -1,6 +1,6 @@
 const slackClient = require("./slackClient")
 const DEFAULT_ATTACHMENT = {
-  "pretext": "Time to board the train! Train departs NOW. Please start a Slack or Zoom call and chat with each other for 15 minutes.",
+  "pretext": "Time to board the train! Train departs NOW. You've got 15 minutes to converse with each other.",
   "title": "Some conversation prompts to get you started (optional):",
   "callback_id": "fetch_prompt",
   "color": "#3AA3E3",
@@ -23,21 +23,31 @@ const DEFAULT_ATTACHMENT = {
   ]
 }
 
-exports.buildAttachments = function buildAttachments(payload) {
-  let attachment
+exports.buildAttachments = function buildAttachments(payload, members = null) {
+  let promptAttachment, whoCallsAttachment
 
   if (payload && payload.original_message) {
-    attachment = payload.original_message.attachments[0]
+    promptAttachment = payload.original_message.attachments[0]
+    whoCallsAttachment = payload.original_message.attachments[1]
   } else {
-    attachment = DEFAULT_ATTACHMENT
+    promptAttachment = DEFAULT_ATTACHMENT
+    if (members) {
+      let filteredUsers = members.filter(user => user != "UCE34NAFQ")
+      let user = filteredUsers[Math.floor(Math.random() * filteredUsers.length)]
+
+      whoCallsAttachment = {
+        "title": "Start a Slack or Zoom call!",
+        "text": `<@${user}>, please initiate the call.`
+      }
+    }
   }
 
   let personalprompt = getPersonalPrompt()
   let workprompt = getWorkPrompt()
-  attachment.fields[0]["value"] = personalprompt
-  attachment.fields[1]["value"] = workprompt
+  promptAttachment.fields[0]["value"] = personalprompt
+  promptAttachment.fields[1]["value"] = workprompt
 
-  return [attachment]
+  return [promptAttachment, whoCallsAttachment]
 }
 
 // TODO: The following functions are standalones to test the replace message

@@ -21,7 +21,7 @@ function sendRequest(groupChannel) {
   console.log("Concurrent sendRequest: " + groupChannel.group.id)
   return slackClient.postMessage({
     channel: groupChannel.group.id,
-    attachments: messageBuilder.buildAttachments()
+    attachments: messageBuilder.buildAttachments(null, groupChannel.group.members)
   })
 }
 
