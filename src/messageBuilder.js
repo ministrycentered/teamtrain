@@ -32,7 +32,8 @@ exports.buildAttachments = function buildAttachments(payload, members = null) {
   } else {
     promptAttachment = DEFAULT_ATTACHMENT
     if (members) {
-      let user = members[Math.floor(Math.random() * members.length)]
+      let filteredUsers = members.filter(user => user != "UCE34NAFQ")
+      let user = filteredUsers[Math.floor(Math.random() * filteredUsers.length)]
 
       whoCallsAttachment = {
         "title": "Start a Slack or Zoom call!",
