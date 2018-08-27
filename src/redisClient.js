@@ -2,7 +2,7 @@ const config = require("config")
 const redis = require("redis")
 
 const redisConfig = config.get("redis")
-const client = redis.createClient(redis.redisUrl)
+const client = redis.createClient(redisConfig.redisUrl)
 
 const PREFIX = "railtie"
 const CHANNEL_KEY = key("message-channel")
