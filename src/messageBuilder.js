@@ -26,7 +26,7 @@ const DEFAULT_ATTACHMENT = {
 exports.buildAttachments = function buildAttachments(payload) {
   let attachment
 
-  if (payload.original_message) {
+  if (payload && payload.original_message) {
     attachment = payload.original_message.attachments[0]
   } else {
     attachment = DEFAULT_ATTACHMENT
