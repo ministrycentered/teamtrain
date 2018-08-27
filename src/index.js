@@ -21,10 +21,15 @@ app.start = async () => {
   const server = http.createServer(app)
 
   app.post("/callback", function (req, res) {
-    res.writeHead(200, { "Content-Type": "application/json" })
     const payload = JSON.parse(req.body.payload)
 
-    processCallback(payload)
+    if (payload.token === slackConfig.railtie.verificationToken) {
+      res.writeHead(200, { "Content-Type": "application/json" })
+      processCallback(payload)
+    } else {
+      res.writeHead(403, { "Content-Type": "text/plain" })
+      throw new Error("token not verified")
+    }
 
     res.end()
   })
