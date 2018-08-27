@@ -16,6 +16,31 @@ function shuffle(array) {
   }
 }
 
+function sendRequest(groupChannel) {
+  console.log("Concurrent sendRequest: " + groupChannel.group.id)
+  return slackClient.postMessage({
+    channel: groupChannel.group.id,
+    "text": "Time to board the train! Train departs NOW. Please start a Slack or Zoom call and chat with each other for 15 minutes.\n\nSome conversation prompts to get you started (optional):",
+    "attachments": [
+      {
+        "text": "What’s the farthest you’ve ever been from home?",
+        "fallback": "Unable to fetch prompt.",
+        "callback_id": "prompt_callback",
+        "color": "#3AA3E3",
+        "attachment_type": "default",
+        "actions": [
+          {
+            "name": "prompt",
+            "text": "I need another prompt",
+            "type": "button",
+            "value": "new"
+          }
+        ]
+      }
+    ]
+  })
+}
+
 async function main() {
   const { channel, timestamp } = await redisClient.getPrepMessageInfo()
 
@@ -29,7 +54,7 @@ async function main() {
 
   shuffle(reactionUsers)
 
-  var group
+  var group, groups = []
   while (reactionUsers.length > 0) {
     // create a group of 3 if odd number
     if (reactionUsers.length == 3) {
@@ -39,12 +64,25 @@ async function main() {
     }
 
     const groupChannel = await slackClient.openGroup(group)
-    // TODO these posts should happen in parallel please
-    await slackClient.postMessage({
-      channel: groupChannel.group.id,
-      text: "Testing Testing, test 1 2 3!"
-    })
+    groups.push(groupChannel)
   }
+
+  var promises = []
+  for(let i = 0; i < groups.length; i++) {
+    let promise = new Promise(async function(resolve, reject) {
+      let json = await sendRequest(groups[i])
+      if (json.ok) {
+        resolve({"ok": json.ok, "groupChannelId": groups[i].group.id})
+      } else {
+        // possibly add in a retry for failed groups?
+        reject({"ok": json.ok, "groupChannelId": groups[i].group.id})
+      }
+    })
+
+    promises.push(promise)
+  }
+
+  await Promise.all(promises).then(values => { console.log(values) })
 }
 
 main().then(() => process.exit(0))
