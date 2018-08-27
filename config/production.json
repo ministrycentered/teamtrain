@@ -1,4 +1,7 @@
 {
+  "redis": {
+    "redisUrl": "REDIS_URL"
+  },
   "slack": {
     "railtie": {
       "channel": "SLACK_CHANNEL",
