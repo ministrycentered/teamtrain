@@ -28,6 +28,7 @@ app.start = async () => {
       processCallback(payload)
     } else {
       res.writeHead(403, { "Content-Type": "text/plain" })
+      res.end()
       throw new Error("token not verified")
     }
 
