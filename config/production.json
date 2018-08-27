@@ -8,5 +8,10 @@
       "token": "SLACK_BOT_TOKEN",
       "verificationToken": "SLACK_VERIFICATION_TOKEN"
     }
+  },
+  "google": {
+    "clientId": "GOOGLE_CLIENT_ID",
+    "clientSecret": "GOOGLE_CLIENT_SECRET",
+    "refreshToken": "GOOGLE_REFRESH_TOKEN"
   }
 }

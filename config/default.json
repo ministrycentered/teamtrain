@@ -6,5 +6,8 @@
     "port": 6379,
     "host": "127.0.0.1",
     "redisUrl": "redis://127.0.0.1:6379/1"
+  },
+  "google": {
+    "sheetId": "1E7bi4x9y32tO4Mb6hb5phn-zYjLlz53Wc8xk6xColxI"
   }
 }

@@ -20,12 +20,12 @@ app.start = async () => {
 
   const server = http.createServer(app)
 
-  app.post("/callback", function (req, res) {
+  app.post("/callback", async function (req, res) {
     const payload = JSON.parse(req.body.payload)
 
     if (payload.token === slackConfig.railtie.verificationToken) {
       res.writeHead(200, { "Content-Type": "application/json" })
-      processCallback(payload)
+      await processCallback(payload)
     } else {
       res.writeHead(403, { "Content-Type": "text/plain" })
       res.end()
@@ -38,8 +38,8 @@ app.start = async () => {
   server.listen(port)
 }
 
-function processCallback(payload) {
-  let attachments = msgBuilder.buildAttachments(payload)
+async function processCallback(payload) {
+  let attachments = await msgBuilder.buildAttachments(payload)
   slackClient.updateMessage({
     channel: payload.channel.id,
     ts: payload.message_ts,

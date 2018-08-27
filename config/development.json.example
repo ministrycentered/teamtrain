@@ -5,5 +5,10 @@
       "token": "",
       "verificationToken": ""
     }
+  },
+  "google": {
+    "clientId": "",
+    "clientSecret": "",
+    "refreshToken": ""
   }
 }
