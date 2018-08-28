@@ -38,8 +38,8 @@ app.start = async () => {
   server.listen(port)
 }
 
-function processCallback(payload) {
-  let attachments = msgBuilder.buildAttachments(payload)
+async function processCallback(payload) {
+  let attachments = await msgBuilder.buildAttachments(payload)
   slackClient.updateMessage({
     channel: payload.channel.id,
     ts: payload.message_ts,
