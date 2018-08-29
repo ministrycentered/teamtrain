@@ -1,9 +1,15 @@
+const moment = require("moment")
+require("moment-timezone")
+
+if (moment().tz("America/Los_Angeles").day() !== 3) {
+  console.log("attempted to run scheduler, exiting because !Wednesday")
+  process.exit(0)
+}
+
 const redisClient = require("./redisClient")
 const fetch = require("node-fetch")
 const slackConfig = require("config").get("slack")
 const slackClient = require("./slackClient")
-const moment = require("moment")
-require("moment-timezone")
 
 // 1:30pm
 const departureTime = moment(process.argv[2], "h:mma").tz("America/Los_Angeles")
