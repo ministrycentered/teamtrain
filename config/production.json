@@ -3,7 +3,7 @@
     "redisUrl": "REDIS_URL"
   },
   "slack": {
-    "railtie": {
+    "teamtrain": {
       "channel": "SLACK_CHANNEL",
       "token": "SLACK_BOT_TOKEN",
       "verificationToken": "SLACK_VERIFICATION_TOKEN"

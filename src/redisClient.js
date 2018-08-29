@@ -4,7 +4,7 @@ const redis = require("redis")
 const redisConfig = config.get("redis")
 const client = redis.createClient(redisConfig.redisUrl)
 
-const PREFIX = "railtie"
+const PREFIX = "teamtrain"
 const CHANNEL_KEY = key("message-channel")
 const TIMESTAMP_KEY = key("message-timestamp")
 

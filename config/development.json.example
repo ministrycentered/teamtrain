@@ -1,6 +1,6 @@
 {
   "slack": {
-    "railtie": {
+    "teamtrain": {
       "channel": "dreamteam-dev",
       "token": "",
       "verificationToken": ""

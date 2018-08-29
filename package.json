@@ -1,5 +1,5 @@
 {
-  "name": "railtie",
+  "name": "Team Train",
   "version": "0.0.1",
   "description": "building relationships at planning center",
   "main": "src/index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ministrycentered/railtie.git"
+    "url": "git+https://github.com/ministrycentered/teamtrain.git"
   },
   "author": "Laura Mosher, Daniel Ma",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ministrycentered/railtie/issues"
+    "url": "https://github.com/ministrycentered/teamtrain/issues"
   },
-  "homepage": "https://github.com/ministrycentered/railtie#readme",
+  "homepage": "https://github.com/ministrycentered/teamtrain#readme",
   "dependencies": {
     "body-parser": "^1.18.3",
     "config": "^2.0.1",
