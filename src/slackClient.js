@@ -9,7 +9,7 @@ async function apiRequest({ route, method = "GET", body }) {
     body: JSON.stringify(body),
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${slackConfig.railtie.token}`
+      Authorization: `Bearer ${slackConfig.teamtrain.token}`
     }
   })
 

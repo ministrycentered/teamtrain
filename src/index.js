@@ -23,7 +23,7 @@ app.start = async () => {
   app.post("/callback", function (req, res) {
     const payload = JSON.parse(req.body.payload)
 
-    if (payload.token === slackConfig.railtie.verificationToken) {
+    if (payload.token === slackConfig.teamtrain.verificationToken) {
       res.writeHead(200, { "Content-Type": "application/json" })
       processCallback(payload)
     } else {

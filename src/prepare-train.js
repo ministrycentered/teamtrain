@@ -28,7 +28,7 @@ console.log("🚂 will depart at", departureTime.format("h:mma"))
 
 async function main() {
   const messageJson = await slackClient.postMessage({
-    channel: slackConfig.railtie.channel,
+    channel: slackConfig.teamtrain.channel,
     text: `All aboard! The train departs at ${departureTime.format(
       "h:mma z"
     )}. Grab your :ticket: to join this train.`
