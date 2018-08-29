@@ -9,10 +9,10 @@ This is a Node.js application that has two main components:
 
 The basic workflow of this project in action:
 
-1. Scheduler prepare's train for departure by posting an all aboard message to the specified channel.
+1. Scheduler prepare's train for departure by posting an all aboard message to the specified channel two hours prior to departure.
 1. Users react using :ticket: to signify their desire to board the train.
-1. Scheduler, at specified time, starts the train by creating a DM between two random individuals that reacted to the intial all aboard message.
-1. Users are given prompts and one person is selected to being the call.
+1. Scheduler, at specified time (currently 8:30am PT and 1:30pm PT), starts the train by creating a DM between two (or three) random individuals that reacted to the intial all aboard message.
+1. Users are given randomly chosen [prompts](https://docs.google.com/spreadsheets/d/1E7bi4x9y32tO4Mb6hb5phn-zYjLlz53Wc8xk6xColxI/edit?usp=sharing) and one person is selected to begin the call.
 1. If users need additional conversation prompts, there is an interactive button that will go fetch additional prompts.
 
 ## Getting Started
