@@ -83,3 +83,13 @@ There are a few things to keep in mind:
 - [Express](https://www.npmjs.com/package/express) - web framework
 - [Slack](https://slack.com) bot integration
 - [GoogleSheets](https://developers.google.com/sheets/api/) integration
+
+## License
+
+[ISC](LICENSE.md)
+
+## Contributing
+
+We encourage you to contribute to Team Train! Please check out the [Contributing to Team Train](CONTRIBUTING.md) for guidelines about how to proceed. Join us!
+
+Everyone interacting in Team Train's codebase, issue trackers, chat rooms, and mailing lists is expected to follow the Team Train [code of conduct](CODE_OF_CONDUCT.md).
