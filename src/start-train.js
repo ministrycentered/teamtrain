@@ -1,10 +1,4 @@
-const moment = require("moment")
-require("moment-timezone")
-
-if (moment().tz("America/Los_Angeles").day() !== 3 && process.argv[3] !== "-f") {
-  console.log("attempted to run scheduler, exiting because !Wednesday")
-  process.exit(0)
-}
+require("./runDays")
 
 const redisClient = require("./redisClient")
 const slackClient = require("./slackClient")
