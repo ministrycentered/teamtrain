@@ -11,6 +11,7 @@ const slackClient = require("./slackClient")
 const messageBuilder = require("./messageBuilder")
 const fetch = require("node-fetch")
 const slackConfig = require("config").get("slack")
+const trainConfig = require("config").get("train")
 
 function shuffle(array) {
   var i = 0,
@@ -50,11 +51,10 @@ async function main() {
   var group,
     groups = []
   while (reactionUsers.length > 0) {
-    // create a group of 3 if odd number
-    if (reactionUsers.length == 3) {
-      group = reactionUsers.splice(0, 3).toString()
+    if (reactionUsers.length < trainConfig.groupSize) {
+      group = reactionUsers.splice(0, reactionUsers.length).toString()
     } else {
-      group = reactionUsers.splice(0, 2).toString()
+      group = reactionUsers.splice(0, trainConfig.groupSize).toString()
     }
 
     const groupChannel = await slackClient.openGroup(group)
