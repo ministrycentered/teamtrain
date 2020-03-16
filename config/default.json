@@ -9,5 +9,9 @@
   },
   "google": {
     "sheetId": "1E7bi4x9y32tO4Mb6hb5phn-zYjLlz53Wc8xk6xColxI"
+  },
+  "train": {
+    "groupSize": 4,
+    "runDays": [1, 2, 3, 4, 5]
   }
 }
