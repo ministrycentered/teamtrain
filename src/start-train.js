@@ -6,6 +6,7 @@ if (moment().tz("America/Los_Angeles").day() !== 3 && process.argv[3] !== "-f") 
   process.exit(0)
 }
 
+const _ = require('lodash')
 const redisClient = require("./redisClient")
 const slackClient = require("./slackClient")
 const messageBuilder = require("./messageBuilder")
@@ -41,9 +42,11 @@ async function main() {
 
   const reactionJson = await slackClient.getReactions({ channel, timestamp })
 
-  const reactionUsers = reactionJson.message.reactions
-    .filter(emoji => emoji.name == "ticket")[0]
-    .users.filter(user => user != "UCE34NAFQ") // remove bot user
+  const unUniquedUsers = reactionJson.message.reactions
+    .flatMap(r => r.users)
+    .filter(user => user != "UCE34NAFQ") // remove bot user
+
+  const reactionUsers = _.uniq(unUniquedUsers)
 
   shuffle(reactionUsers)
 
