@@ -34,45 +34,50 @@ async function main() {
 
   console.log({ channel, timestamp })
 
-  const reactionJson = await slackClient.getReactions({ channel, timestamp })
+  try {
+    const reactionJson = await slackClient.getReactions({ channel, timestamp })
 
-  const reactionUsers = reactionJson.message.reactions
-    .filter(emoji => emoji.name == "ticket")[0]
-    .users.filter(user => user != "UCE34NAFQ") // remove bot user
+    const reactionUsers = reactionJson.message.reactions
+      .filter(emoji => emoji.name == "ticket")[0]
+      .users.filter(user => user != "UCE34NAFQ") // remove bot user
 
-  shuffle(reactionUsers)
+    shuffle(reactionUsers)
 
-  var group,
-    groups = []
-  while (reactionUsers.length > 0) {
-    if (reactionUsers.length < trainConfig.groupSize) {
-      group = reactionUsers.splice(0, reactionUsers.length).toString()
-    } else {
-      group = reactionUsers.splice(0, trainConfig.groupSize).toString()
+    var group,
+      groups = []
+    while (reactionUsers.length > 0) {
+      if (reactionUsers.length < trainConfig.groupSize) {
+        group = reactionUsers.splice(0, reactionUsers.length).toString()
+      } else {
+        group = reactionUsers.splice(0, trainConfig.groupSize).toString()
+      }
+
+      const groupChannel = await slackClient.openGroup(group)
+      groups.push(groupChannel)
     }
 
-    const groupChannel = await slackClient.openGroup(group)
-    groups.push(groupChannel)
-  }
+    var promises = []
+    for (let i = 0; i < groups.length; i++) {
+      let promise = new Promise(async function(resolve, reject) {
+        let json = await sendRequest(groups[i])
+        if (json.ok) {
+          resolve({ ok: json.ok, groupChannelId: groups[i].group.id })
+        } else {
+          // possibly add in a retry for failed groups?
+          reject({ ok: json.ok, groupChannelId: groups[i].group.id })
+        }
+      })
 
-  var promises = []
-  for (let i = 0; i < groups.length; i++) {
-    let promise = new Promise(async function(resolve, reject) {
-      let json = await sendRequest(groups[i])
-      if (json.ok) {
-        resolve({ ok: json.ok, groupChannelId: groups[i].group.id })
-      } else {
-        // possibly add in a retry for failed groups?
-        reject({ ok: json.ok, groupChannelId: groups[i].group.id })
-      }
+      promises.push(promise)
+    }
+
+    await Promise.all(promises).then(values => {
+      console.log(values)
     })
-
-    promises.push(promise)
+  } catch (e) {
+    console.log('something went wrong!')
+    console.log(e)
   }
-
-  await Promise.all(promises).then(values => {
-    console.log(values)
-  })
 }
 
 main().then(() => process.exit(0))

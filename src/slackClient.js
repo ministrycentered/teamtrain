@@ -39,7 +39,7 @@ exports.getReactions = async function getReactions({ channel, timestamp }) {
 }
 
 exports.openGroup = async function openGroup(users) {
-  return apiRequest({ route: "mpim.open", method: "POST", body: { users } })
+  return apiRequest({ route: "conversations.open", method: "POST", body: { users } })
 }
 
 module.exports = exports
