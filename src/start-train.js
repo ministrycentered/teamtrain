@@ -61,10 +61,10 @@ async function main() {
       let promise = new Promise(async function(resolve, reject) {
         let json = await sendRequest(groups[i])
         if (json.ok) {
-          resolve({ ok: json.ok, groupChannelId: groups[i].group.id })
+          resolve({ ok: json.ok, groupChannelId: groups[i].channel.id })
         } else {
           // possibly add in a retry for failed groups?
-          reject({ ok: json.ok, groupChannelId: groups[i].group.id })
+          reject({ ok: json.ok, groupChannelId: groups[i].channel.id })
         }
       })
 
