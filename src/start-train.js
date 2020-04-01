@@ -20,11 +20,11 @@ function shuffle(array) {
   }
 }
 
-async function sendRequest(groupChannel) {
-  console.log("Concurrent sendRequest: " + groupChannel.group.id)
-  const attachments = await messageBuilder.buildAttachments(null, groupChannel.group.members)
+async function sendRequest(groupChannel, members) {
+  console.log("Concurrent sendRequest: " + groupChannel.channel.id)
+  const attachments = await messageBuilder.buildAttachments(null, members)
   return slackClient.postMessage({
-    channel: groupChannel.group.id,
+    channel: groupChannel.channel.id,
     attachments: attachments
   })
 }
@@ -53,18 +53,20 @@ async function main() {
       }
 
       const groupChannel = await slackClient.openGroup(group)
-      groups.push(groupChannel)
+      groups.push([groupChannel, group])
     }
 
     var promises = []
     for (let i = 0; i < groups.length; i++) {
+      const [groupChannel, group] = groups[i]
+
       let promise = new Promise(async function(resolve, reject) {
-        let json = await sendRequest(groups[i])
+        let json = await sendRequest(groupChannel, group)
         if (json.ok) {
-          resolve({ ok: json.ok, groupChannelId: groups[i].channel.id })
+          resolve({ ok: json.ok, groupChannelId: groupChannel.channel.id })
         } else {
           // possibly add in a retry for failed groups?
-          reject({ ok: json.ok, groupChannelId: groups[i].channel.id })
+          reject({ ok: json.ok, groupChannelId: groupChannel.channel.id })
         }
       })
 
