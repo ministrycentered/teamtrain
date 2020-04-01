@@ -47,12 +47,12 @@ async function main() {
       groups = []
     while (reactionUsers.length > 0) {
       if (reactionUsers.length < trainConfig.groupSize) {
-        group = reactionUsers.splice(0, reactionUsers.length).toString()
+        group = reactionUsers.splice(0, reactionUsers.length)
       } else {
-        group = reactionUsers.splice(0, trainConfig.groupSize).toString()
+        group = reactionUsers.splice(0, trainConfig.groupSize)
       }
 
-      const groupChannel = await slackClient.openGroup(group)
+      const groupChannel = await slackClient.openGroup(group.toString())
       groups.push([groupChannel, group])
     }
 
