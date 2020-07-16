@@ -12,6 +12,6 @@
   },
   "train": {
     "groupSize": 4,
-    "runDays": [1, 2, 3, 4, 5]
+    "runDays": [2, 4]
   }
 }
